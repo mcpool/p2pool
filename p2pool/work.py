@@ -43,6 +43,8 @@ class WorkerBridge(worker_interface.WorkerBridge):
         
         self.removed_unstales_var = variable.Variable((0, 0, 0))
         self.removed_doa_unstales_var = variable.Variable(0)
+
+        self.last_work_shares = variable.Variable( {} )
         
         self.my_share_hashes = set()
         self.my_doa_share_hashes = set()
@@ -363,7 +365,10 @@ class WorkerBridge(worker_interface.WorkerBridge):
                     len(self.current_work.value['transactions']),
                 )
                 print_throttle = time.time()
-        
+
+        #need this for stats
+        self.last_work_shares.value[bitcoin_data.pubkey_hash_to_address(pubkey_hash, self.node.net.PARENT)]=share_info['bits']
+              
         ba = dict(
             version=min(self.current_work.value['version'], 2),
             previous_block=self.current_work.value['previous_block'],
